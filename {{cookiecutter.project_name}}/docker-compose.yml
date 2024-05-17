@@ -1,0 +1,46 @@
+version: "3.9"
+
+services:
+  api:
+    build: ./
+    container_name: autobeket-api
+    restart: always
+    volumes:
+      - ./:/usr/src/app/
+      - local_media:/usr/src/app/media
+    env_file:
+      - ./.env
+    depends_on:
+      - db
+
+    ports:
+      - "8000:8000"
+
+  db:
+    image: postgres:16
+    container_name: autobeket-db
+    volumes:
+      - local_postgres_data:/var/lib/postgresql/data
+
+    env_file:
+      - ./.env
+
+    ports:
+      - "5432:5432"
+
+  celery:
+    build: ./
+    command: celery -A config worker --loglevel=info -B
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+
+  redis:
+    image: redis:alpine
+
+volumes:
+  local_media: {}
+  local_postgres_data: {}

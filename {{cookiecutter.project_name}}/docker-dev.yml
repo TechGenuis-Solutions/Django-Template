@@ -1,0 +1,21 @@
+services:
+  db:
+    image: postgres:16
+    container_name: autobeket-db
+    volumes:
+      - local_postgres_data:/var/lib/postgresql/data
+
+    env_file:
+      - ./.env
+
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
+volumes:
+  local_media: {}
+  local_postgres_data: {}
